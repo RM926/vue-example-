@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      box-sizing: border-box;
+    }
+    .container {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      width: 400px;
+      height: 100vh;
+      overflow-y: scroll;
+      border: 1px solid #000;
+    }
+    ul li{
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      margin-top:30px;
+    }
+    p{
+      margin-top:10px;
+    }
+    .blank {
+      width: 300px;
+      height: 300px;
+      border: 1px solid rgb(209, 168, 35)
+    }
+    .getMore{
+      margin: 20px 0;
+      color:royalblue;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="container">
+      <ul ref="loadArea">
+        <li v-for="(item,index) in ListData" :key="index">
+          <div class="blank"></div>
+          <p>文章名字及详情</p>
+        </li>
+      </ul>
+      <div v-if="Loading" class="getMore">加载中...</div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script>
+    new Vue({
+      el: "#app",
+      data() {
+        return {
+          ListData: 10,
+          message: "hhh",
+          Loading: false
+        }
+      },
+      mounted() {
+        this.addScroll()
+      },
+      methods: {
+        addScroll(){
+          document.querySelector('.container').addEventListener('scroll', this.callback)
+        },
+        removeScroll(){
+          document.querySelector('.container').removeEventListener('scroll', this.callback)
+        },
+        callback(e) {
+          let H = e.srcElement.scrollHeight
+          let T = Math.ceil(e.srcElement.scrollTop)
+          let C = e.srcElement.clientHeight
+          let isLoading = (T + 200 + C > H)
+          if (isLoading) {
+            //因为isLoading的结果是还未到底就进行判断，为了防止多次符合条件请求，先移除滚动事件，而后再添加
+            this.removeScroll()
+            this.getMore()
+            this.Loading = true
+          }
+        },
+        getMore() {
+          //用定时器模仿后台请求的延时时间
+          setTimeout(() => {
+            this.ListData += 10
+            this.addScroll()
+            this.isLoading = false
+          }, 500)
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
