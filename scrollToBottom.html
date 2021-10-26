@@ -34,7 +34,12 @@
     .blank {
       width: 300px;
       height: 300px;
-      border: 1px solid rgb(209, 168, 35)
+      border: 1px solid rgb(209, 168, 35);
+      background:rgb(89, 182, 154)
+    }
+    .blank img{
+      width:100%;
+      height:100%;
     }
     .getMore{
       margin: 20px 0;
@@ -48,7 +53,7 @@
     <div class="container">
       <ul ref="loadArea">
         <li v-for="(item,index) in ListData" :key="index">
-          <div class="blank"></div>
+          <div class="blank"><img src="" alt="" img-src="./tatan.jpg" ref='img'></div>
           <p>文章名字及详情</p>
         </li>
       </ul>
@@ -77,6 +82,7 @@
           document.querySelector('.container').removeEventListener('scroll', this.callback)
         },
         callback(e) {
+          //无限滚动的代码
           let H = e.srcElement.scrollHeight
           let T = Math.ceil(e.srcElement.scrollTop)
           let C = e.srcElement.clientHeight
@@ -87,6 +93,22 @@
             this.getMore()
             this.Loading = true
           }
+          //懒加载的代码
+          //获取li距离上端的位置，当前窗口距离上端的位置，可视窗口大小
+          let imgs = this.$refs.img
+          for(let t in imgs){
+            if(C + T  > this.getTop(imgs[t]))
+            setTimeout(()=> {
+              imgs[t].src = imgs[t].getAttribute('img-src')
+            },300)
+          }
+        },
+        getTop(e){
+          let T = e.offsetTop;
+            while(e = e.offsetParent) {
+                T += e.offsetTop;
+            }
+            return T;
         },
         getMore() {
           //用定时器模仿后台请求的延时时间
